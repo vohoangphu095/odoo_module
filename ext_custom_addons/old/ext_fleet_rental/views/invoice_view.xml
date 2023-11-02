@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_invoice_tree_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.inherit.tree</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_tree"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="before">
+                    <field name="rental_id" invisible="1"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_account_invoice_form_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.inherit.form</field>
+            <field name="model">account.move</field>
+            <field name="mode">primary</field>
+            <field name="priority">1000</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="rental_id" string="Fleet rental Ref"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="account_invoice_tree_all" model="ir.actions.act_window">
+            <field name="name">Fleet Rental</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,form</field>
+<!--            <field name="search_view_id" ref="account.view_account_invoice_filter"/>-->
+            <field name="context">{'type':'out_invoice'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No product found. Let's create one!
+                </p>
+                <p>
+                    Track your stock quantities by creating storable products.
+                </p>
+            </field>
+        </record>
+    </data>
+<!--    <data>-->
+<!--        <record id="account_invoice_line_form_inherit" model="ir.ui.view">-->
+<!--            <field name="name">account.invoice.line.inherit</field>-->
+<!--            <field name="model">account.move.line</field>-->
+<!--            <field name="inherit_id" ref="account.view_move_line_form"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//field[@name='discount']" position="before">-->
+<!--                    <field name="rental_id"/>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
+<!--    </data>-->
+    <menuitem id="bike_rental_invoice_menu"
+              name="Xem Invoice"
+              parent="bike_rental_menu_root"
+              groups="base.group_user"
+              sequence="2"/>
+
+    <menuitem
+            id="rental_invoice_tree"
+            name="Invoice View"
+            action="account_invoice_tree_all"
+            parent="bike_rental_invoice_menu"
+            sequence="2"
+    />
+</odoo>

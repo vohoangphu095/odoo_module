@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="doctor_form" model="ir.ui.view">
+        <field name="name">hospital.doctor.form</field>
+        <field name="model">hospital.doctor</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"></field>
+                    <div class="oe_title">
+
+                    </div>
+                    <group>
+                        <group>
+                            <field name="doctor_name"></field>
+                            <field name="age"></field>
+                            <field name="is_deleted"></field>
+                        </group>
+                        <group>
+
+                            <field name="gender"></field>
+                            <field name="note"></field>
+                        </group>
+                    </group>
+                </sheet>
+
+
+            </form>
+        </field>
+    </record>
+    <record id="doctor_tree" model="ir.ui.view">
+
+        <field name="name">hospital.doctor.tree</field>
+        <field name="model">hospital.doctor</field>
+        <field name="arch" type="xml">
+            <tree sample="1">
+                <field name="doctor_name" optional="show"></field>
+                <field name="age" optional="hide"></field>
+                <field name="gender" optional="hide"></field>
+
+            </tree>
+        </field>
+    </record>
+    <record id="view_patient_kanban" model="ir.ui.view">
+        <field name="name">hospital.doctor.kanban</field>
+        <field name="model">hospital.doctor</field>
+        <field name="arch" type="xml">
+            <kanban sample="1" default_order="doctor_name desc">
+                <field name="id"></field>
+                <field name="doctor_name"></field>
+                <field name="gender"></field>
+                <field name="age"></field>
+                <field name="note"></field>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <ul>
+                                    <li>
+                                        Image:
+                                        <field name="image"></field>
+                                    </li>
+                                    <li>
+                                        Name:
+                                        <field name="doctor_name"></field>
+                                    </li>
+                                    <!--    de tung cai li de no cuat hien ben ngoai-->
+                                    <li>
+                                        Age:
+                                        <field name="age"></field>
+                                    </li>
+                                    <li>
+                                        Gender:
+                                        <field name="gender"></field>
+                                    </li>
+                                    <!--                                     <li>-->
+                                    <!--                                        Age: <field name="age"></field>-->
+                                    <!--                                    </li>-->
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="doctor_action" model="ir.actions.act_window">
+        <field name="name">patients</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hospital.doctor</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                create your first doctor
+            </p>
+        </field>
+
+    </record>
+
+
+    <menuitem id="doctor" name="Doctor" parent="hospital_root" sequence="10" action="doctor_action"></menuitem>
+
+</odoo>

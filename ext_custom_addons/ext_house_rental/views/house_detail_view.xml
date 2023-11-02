@@ -1,0 +1,46 @@
+<odoo>
+
+    <record id="view_house_detail_tree" model="ir.ui.view">
+        <field name="name">house.tree</field>
+        <field name="model">house.detail</field>
+        <field name="arch" type="xml">
+            <tree string="House Detail Tree View">
+                <field name="name"/>
+                 <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_house_detail_form" model="ir.ui.view">
+        <field name="name">house.detail.form</field>
+        <field name="model">house.detail</field>
+        <field name="arch" type="xml">
+            <header><record id="action_house_detail" model="ir.actions.act_window">
+        <field name="name">View House Detail</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">house.detail</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+                <form>
+                    <group>
+                        <field name="status"/>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </header>
+        </field>
+    </record>
+
+    <record id="action_house_detail" model="ir.actions.act_window">
+        <field name="name">View House Detail</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">house.detail</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <menuitem id="menuroot" name="Root Menu"/>
+    <menuitem id="menu_house_detail" name="House Detail" parent="menuroot" action="action_house_detail"/>
+
+</odoo>

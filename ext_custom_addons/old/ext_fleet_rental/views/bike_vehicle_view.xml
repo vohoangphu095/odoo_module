@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--    lop hoc     -->
+    <!--*************************************************-->
+    <!--tree view-->
+    <record id="view_bike_vehicle_tree_with_onboarding" model="ir.ui.view">
+        <field name="name">bike.vehicle.tree</field>
+        <field name="model">bike.vehicle</field>
+        <field name="priority">4</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="state == 'error'" decoration-success="state == 'ready'"
+                  decoration-primary="state == 'running'" string="Xe Cho Thuê" delete="false">
+                <field name="warehouse_id" string="Cửa Hàng"/>
+                <field name="bike_name" string="Tên Xe Cho Thuê"/>
+                <field name="bike_sku" string="Mã Xe(SKU)"/>
+                <field name="bike_lot" string="Số Khung Xe"/>
+                <field name="bike_size" string="Size Xe"/>
+                <field name="state" string="Trạng Thái"/>
+                <field name="bike_color" string="Màu Xe"/>
+                <field name="company_id" string="Công Ty"/>
+                <field name="bike_qty" string="Số Lần Thuê"/>
+                <field name="bike_hour" string="Tổng Giờ Thuê"/>
+            </tree>
+        </field>
+    </record>
+    <!--seach view-->
+
+    <record id="bike_vehicle_view_search" model="ir.ui.view">
+        <field name="name">bike.vehicle.list.select</field>
+        <field name="model">bike.vehicle</field>
+        <field name="priority" eval="15"/>
+        <field name="arch" type="xml">
+            <search string="Tìm Xe Cho Thuê">
+                <field name="bike_name"/>
+                <group expand='0' string='Group by...'>
+                    <filter string='Cửa Hàng' name="warehouse_id" domain="[]" context="{'group_by': 'warehouse_id'}"/>
+                    <separator/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <!--form view-->
+    <record id="bike_vehicle_view_form" model="ir.ui.view">
+        <field name="name">bike.vehicle.form</field>
+        <field name="model">bike.vehicle</field>
+        <field name="arch" type="xml">
+            <form string="Sales BIKE Item" delete="false">
+                <header>
+                    <button name="action_ready" type="object" string="Sẳn Sàng Cho Thuê" state="draft"
+                            attrs="{'invisible': [('state','not in', ('draft','error'))]}" />
+<!--                            groups="group_name1,group_name2"-->
+                    <field name="state" widget="statusbar" statusbar_visible="create,running,error,ready" readonly="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <font size="30" color="#FF0000">Tên Xe</font>
+                        <h1>
+                            <field name="bike_name" string="Tên Xe Cho Thuê"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" string="Công Ty" readonly="1"/>
+                            <field name="warehouse_id" string="Cửa Hàng"/>
+                            <field name="bike_sku" string="Mã Xe(SKU)"/>
+                            <field name="bike_lot" string="Số Khung Xe"/>
+                        </group>
+                        <group>
+                            <field name="bike_size" string="Size Xe"/>
+                            <field name="bike_color" string="Màu Xe"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <!--action-->
+    <record id="action_bike_vehicle" model="ir.actions.act_window">
+        <field name="name">Danh Sach Xe Thuê</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bike.vehicle</field>
+        <field name="view_id" ref="view_bike_vehicle_tree_with_onboarding"/>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="bike_vehicle_view_search"/>
+        <field name="context">{"search_default_warehouse_id":1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo Xe tại đây!
+            </p>
+            <p>
+                Once the quotation is confirmed by the customer, it becomes a sales order.
+                <br/>
+                You will be able to create an invoice and collect the payment.
+            </p>
+        </field>
+    </record>
+    <!--  ********************************************  -->
+    <!--action-->
+    <menuitem id="bike_vehicle_menu"
+              name="Xe Thuê"
+              parent="bike_rental_menu_root"
+              groups="base.group_user"
+              sequence="2"/>
+
+    <menuitem id="bike_vehicle_sub_menu"
+              name="Danh Sách Xe"
+              parent="bike_vehicle_menu"
+              action="action_bike_vehicle"
+              groups="base.group_user"
+              sequence="2"/>
+</odoo>
+
+

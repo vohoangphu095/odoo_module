@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="menu_wh_root" web_icon="ext_warehouse_server,static/description/icon.png" name="Warehouse Server"/>
+    <!-- Define a new top-level menu item -->
+    <menuitem id="warehouse_server" name="Warehouse Server" parent="menu_wh_root" action="action_warehouse_server"/>
+    <menuitem id="product_server" name="Product" parent="menu_wh_root"/>
+    <menuitem id="Server_info" name="Server Info" parent="product_server" action="action_server_info"/>
+    <menuitem id="menu_custom_product" name="Custom Products" parent="product_server"
+              action="action_custom_product"/>
+</odoo>

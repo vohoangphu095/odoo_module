@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--    nut dau   -->
+    <menuitem id="bike_rental_menu_root"
+              name="Thuê Xe"
+              web_icon="static/description/icon.png"
+              groups="base.group_user"
+              sequence="7"/>
+    <!--    menu    -->
+    <menuitem id="bike_rental_menu"
+              name="Hóa Đơn Thuê Xe"
+              parent="bike_rental_menu_root"
+              groups="base.group_user"
+              sequence="2"/>
+    <!--cau hinh-->
+    <!--*************************************************-->
+
+    <!--tree view-->
+    <record id="view_bike_rental_tree_with_onboarding" model="ir.ui.view">
+        <field name="name">bike.rental.tree</field>
+        <field name="model">bike.rental</field>
+        <field name="priority">4</field>
+        <field name="arch" type="xml">
+            <tree string="Thuê Xe" class="o_sale_order" delete="false">
+                <field name="name"/>
+                <field name="full_name" string="Tên Người Thuê"/>
+                <field name="partner_phone" string="SĐT"/>
+                <field name="partner_cmnd" string="CMND/CCCD"/>
+                <field name="company_id"/>
+                <field name="warehouse_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <!--kanban view-->
+    <record model="ir.ui.view" id="view_bike_rental_kanban">
+        <field name="name">bike.rental.kanban</field>
+        <field name="model">bike.rental</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="warehouse_id"/>
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="amount_total"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_record_top mb16">
+                                <div class="o_kanban_record_headings mt4">
+                                    <strong class="o_kanban_record_title">
+                                        <span>
+                                            <t t-esc="record.warehouse_id.value"/>
+                                        </span>
+                                    </strong>
+                                </div>
+                                <strong>
+                                    <field name="amount_total" widget="monetary"/>
+                                </strong>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left text-muted">
+                                    <span>
+                                        <t t-esc="record.name.value"/>
+                                        <t t-esc="record.date_start.value"/>
+                                    </span>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="state" widget="label_selection"
+                                           options="{'classes': {'create': 'Create', 'running': 'Running', 'done': 'success'}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!--seach view-->
+    <record id="bike_rental_view_search" model="ir.ui.view">
+        <field name="name">bike.rental.list.select</field>
+        <field name="model">bike.rental</field>
+        <field name="priority" eval="15"/>
+        <field name="arch" type="xml">
+            <search string="Quants">
+                <field name="name"/>
+                <field name="full_name"/>
+                <group expand='0' string='Filters'>
+                    <filter name="state" string="Trạng Thái Running" domain="[('state', '=', 'running')]"/>
+                    <separator/>
+                </group>
+                <group expand='0' string='Group by...'>
+                    <filter string='Cửa Hàng' name="warehouse_id" domain="[]" context="{'group_by': 'warehouse_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Pilot View  -->
+    <record model="ir.ui.view" id="bike_rental_view_pivot">
+        <field name="name">bike.rental.pivot</field>
+        <field name="model">bike.rental</field>
+        <field name="arch" type="xml">
+            <pivot string="Sales Orders">
+                <field name="date_order" type="row"/>
+                <field name="amount_time" type="measure"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!--form view-->
+    <record id="bike_rental_view_form" model="ir.ui.view">
+        <field name="name">bike.rental.form</field>
+        <field name="model">bike.rental</field>
+        <field name="arch" type="xml">
+            <form string="Fleet Rental Item" delete="false">
+                <header>
+                    <button name="action_running" type="object" string="Running" state="create"
+                            attrs="{'invisible': [('state','not in', ('create'))]}"/>
+                    <button name="action_confirm" type="object" string="Xác Nhận Trả Xe" state="running"
+                            attrs="{'invisible': [('state','not in', ('running'))]}"/>
+                    <button name="create_invoice" type="object" string="Xuất Invoice" state="confirm"
+                            attrs="{'invisible': [('state','not in', ('confirm'))]}"/>
+                    <button name="action_cancel" type="object" string="Bỏ HĐ"/>
+                    <button name="update_state_done" type="object" string="Done"
+                            attrs="{'invisible': [('state','not in', ('invoice'))]}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="create,running,confirm,invoice,done"
+                           readonly="1"/>
+                </header>
+                <sheet>
+                    <div>
+                        <group>
+                            <div class="oe_title">
+                                <div class="oe_edit_only">
+                                    <label for="name" string="Biên Bản Hợp Đồng" style="font-size:40px"/>
+                                    <!--                                    <field name="image" widget="image" class="oe_avatar"/>-->
+                                </div>
+                                <h1>
+                                    <field name="name"/>
+                                </h1>
+                            </div>
+                        </group>
+                    </div>
+                    <group>
+                        <group name="profile_customer" string="Thông Tin Khách Hàng(Bắt Buộc Điền CMND/SĐT)"
+                               style="font-size:18px">
+                            <field name="partner_id" string="Khách Hàng"
+                                   attrs="{'readonly': [('state', 'not in', ('create'))]}"/>
+                            <field name="full_name" string="Tên Khách Hàng" readonly="1"/>
+                            <field name="partner_phone" string="SĐT" readonly="1"/>
+                            <field name="partner_cmnd" string="CMND/CCCD" readonly="1"/>
+                            <field name="date_start" string="Ngày Cho Thuê"
+                                   attrs="{'readonly': [('state', 'not in', ('create'))]}"/>
+                            <field name="warehouse_to_location" string="Của Hàng Trả Xe" force_save="1"
+                                   attrs="{'readonly': [('state', 'not in', ('running'))]}"/>
+                            <field name="date_end" string="Ngày Trả Xe"
+                                   attrs="{'readonly': [('state', 'not in', ('running'))]}"/>
+                        </group>
+                        <group name="profile_store" string="Thông Tin Cửa Hàng" style="font-size:18px">
+                            <field name="company_id" string="Công Ty" readonly="1"/>
+                            <field name="warehouse_id" string="Cửa Hàng Cho Thuê"
+                                   attrs="{'readonly': [('state', 'not in', ('create'))]}"/>
+                            <field name="team_id" string="Sale Team"
+                                   attrs="{'readonly': [('state', 'not in', ('create'))]}"/>
+                            <field name="currency_id" string="Tiền"/>
+                            <field name="discount" string="Giảm giá"
+                                   attrs="{'readonly': [('state', 'not in', ('create'))]}"/>
+                            <field name="payment_term_id" string="Paymen"
+                                   attrs="{'readonly': [('state', 'not in', ('confirm'))]}"/>
+
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="bike_vehicle_product" string="Các Xe Thuê">
+                            <field name="bike_rental_line"
+                                   attrs="{'readonly': [('state', 'not in', ('create','running'))]}">
+                                <form string="Bike Rental Lines" readonly="1">
+                                    <group>
+                                        <group>
+                                            <field name="name"/>
+                                            <field name="bike_sku"/>
+                                            <field name="bike_lot"/>
+                                            <field name="status"/>
+                                        </group>
+                                        <group>
+                                            <field name="bike_state"/>
+                                            <field name="state" string="Trạng Thái"/>
+                                        </group>
+                                    </group>
+                                </form>
+                                <tree
+                                        string="Các Xe Thuê"
+                                        editable="bottom"
+                                >
+                                    <field name="status" string="stt_bike_rental" invisible="1"/>
+                                    <field name="bike_id" string="Xe Cho Thuê"
+                                           attrs="{'readonly': [('status', 'not in', ('create'))]}"/>
+                                    <field name="bike_sku" string="SKU"/>
+                                    <field name="bike_lot" string="Số Khung Xe"/>
+                                    <field name="state" string="Trạng Thái Xe" readonly="1"/>
+                                    <field name="bike_state" string="Xác Nhận Xe"
+                                           attrs="{'readonly': [('status', 'not in', ('running'))]}"/>
+                                    <!--                                    <field name="bike_state" string="Trạng Thái Xe" attrs="{'invisible': [('status', 'not in', ('running'))]}"/>-->
+                                    <!--                                    <button name="action_show_details" string="Register lots, packs, location"-->
+                                    <!--                                            type="object" icon="fa-list"-->
+                                    <!--                                            options='{"warn": true}'/>-->
+                                </tree>
+                            </field>
+                            <group name="rental_total" class="oe_subtotal_footer oe_right" colspan="2">
+                                <field name="amount_time" string="Tổng giờ Thuê"/>
+
+                                <field name="amount_untaxed" widget='monetary' string="Giá Chưa Giảm"/>
+                                <field name="amount_tax" widget='monetary' string="Số Tiền Giảm"/>
+
+                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                    <label for="amount_total"/>
+                                </div>
+                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator"
+                                       widget='monetary' string="Tổng Tiền"/>
+                            </group>
+                            <field name="note" class="oe_inline"
+                                   placeholder="Setup default terms and conditions in your sales settings ..."/>
+                            <div class="oe_clear"/>
+                        </page>
+
+                        <page string="Ghi Chú/Góp Ý">
+                            <group>
+                                <group>
+                                    <field name="note" string="Ghi Chú"/>
+                                </group>
+                                <group>
+                                    <field name="gop_y" string="Góp Ý Nhân Viên Về Hệ Thống"/>
+                                </group>
+
+                            </group>
+
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_bike_rental_line_operation_form" model="ir.ui.view">
+        <field name="name">bike.rental.operations.form</field>
+        <field name="model">bike.rental.line</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <form editable="bottom">
+                <group>
+                    <field name="name" readonly="1"/>
+                    <group>
+                        <field name="status" string="Số Khung Xe" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="bike_state" string="Tình Trạng Xe Khi Khách Trả"/>
+                    </group>
+
+                </group>
+            </form>
+        </field>
+    </record>
+    <record id="view_bike_rental_line_operation_form" model="ir.ui.view">
+        <field name="name">bike.rental.operations.form</field>
+        <field name="model">bike.rental.line</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <form editable="bottom">
+                <group>
+                    <field name="name" readonly="1"/>
+                    <group>
+                    </group>
+                    <group>
+                        <field name="bike_state" string="Tình Trạng Xe Khi Khách Trả"/>
+                    </group>
+
+                </group>
+            </form>
+        </field>
+    </record>
+
+
+    <!--action-->
+    <record id="action_bike_rental" model="ir.actions.act_window">
+        <field name="name">Danh Sách Hóa Đơn</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bike.rental</field>
+        <!--        <field name="view_type">form</field>-->
+        <field name="view_id" ref="view_bike_rental_tree_with_onboarding"/>
+        <field name="view_mode">search,tree,form,pivot,kanban</field>
+        <field name="search_view_id" ref="bike_rental_view_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo hóa đơn tại đây!
+            </p>
+            <p>
+                Once the quotation is confirmed by the customer, it becomes a sales order.
+                <br/>
+                You will be able to create an invoice and collect the payment.
+            </p>
+        </field>
+    </record>
+    <!--  ********************************************  -->
+    <!--  ********************************************  -->
+    <!--SST running   -->
+    <record id="view_bike_rental_running_filter" model="ir.ui.view">
+        <field name="name">bike.rental.select</field>
+        <field name="model">bike.rental</field>
+        <field name="arch" type="xml">
+            <search string="Search Bike Rental Running">
+                <field name="name" string="Tên Hóa Đơn"/>
+                <filter name="draft" string="Create" domain="[('state','in',('draft'))]"/>
+                <filter name="running" string="Running" domain="[('state','in',('running'))]"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_bike_rental_state" model="ir.actions.act_window">
+        <field name="name">Danh Sách Running</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bike.rental</field>
+        <field name="view_id" ref="view_bike_rental_tree_with_onboarding"/>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="bike_rental_view_search"/>
+        <field name="context">{"search_default_warehouse_id":1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo hóa đơn tại đây!
+            </p>
+            <p>
+                Once the quotation is confirmed by the customer, it becomes a sales order.
+                <br/>
+                You will be able to create an invoice and collect the payment.
+            </p>
+        </field>
+    </record>
+    <!--SST running   -->
+
+    <menuitem id="menu_danh_sach_hoa_don_state"
+              name="Hóa Đơn Theo Cửa Hàng"
+              action="action_bike_rental_state"
+              parent="bike_rental_menu"
+              groups="base.group_user"
+              sequence="3"/>
+
+    <menuitem id="menu_danh_sach_hoa_don"
+              action="action_bike_rental"
+              parent="bike_rental_menu"
+              groups="base.group_user"
+              sequence="1"/>
+
+</odoo>

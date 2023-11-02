@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="action_hospital_male" model="ir.actions.act_window">
+        <field name="name">male</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hospital1.patient</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{'default_gender':'male','default_note':'new patient'}</field><!-- gia tri khi tao moi no tu dong hien thi gia tri default la male-->
+        <field name="domain">[('gender','=','male')]</field> <!-- sort san gender la male -->
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                create your first kids
+            </p>
+        </field>
+
+    </record>
+    <record id="action_hospital_female" model="ir.actions.act_window">
+        <field name="name">female</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hospital1.patient</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{}</field>
+        <field name="domain">[('gender','=','female')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                create your first kids
+            </p>
+        </field>
+
+    </record>
+
+    <menuitem id="menu_female" name="female" parent="hospital" action="action_hospital_female"></menuitem>
+    <menuitem id="menu_male" name="male" parent="hospital" action="action_hospital_male"></menuitem>
+</odoo>

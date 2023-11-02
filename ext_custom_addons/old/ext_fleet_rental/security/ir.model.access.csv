@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+bike_rental_id,bike_rental_name,model_bike_rental,base.group_user,1,1,1,0
+bike_rental_line_id,bike_rental_line_name,model_bike_rental_line,base.group_user,1,1,1,0
+bike_vehicle_id,bike_vehicle_name,model_bike_vehicle,,1,1,0,0

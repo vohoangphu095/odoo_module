@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+warehouse_server_id,warehouse_server_name,model_warehouse_server,base.group_user,1,1,1,1
+server_info_id,server_info_name,model_server_info,base.group_user,1,1,1,1

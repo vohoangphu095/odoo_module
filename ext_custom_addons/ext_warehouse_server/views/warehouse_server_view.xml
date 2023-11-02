@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Define the form view for WarehouseServer -->
+        <record id="view_warehouse_server_form" model="ir.ui.view">
+            <field name="name">warehouse.server.form</field>
+            <field name="model">warehouse.server</field>
+            <field name="arch" type="xml">
+                <form string="Warehouse Server Form">
+                    <group>
+                        <group>
+                            <!-- Fields on the left side of the form -->
+                            <field name="server_info_id"/>
+                            <field name="server_gen"/>
+                            <field name="date_received"/>
+                            <field name="server_po"/>
+                        </group>
+                        <group>
+                            <!-- Fields on the right side of the form -->
+                            <field name="server_correction"/>
+                            <field name="recieve_location"/>
+                            <field name="partner_id"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!-- Define the tree view for WarehouseServer -->
+        <record id="view_warehouse_server_tree" model="ir.ui.view">
+            <field name="name">warehouse.server.tree</field>
+            <field name="model">warehouse.server</field>
+            <field name="arch" type="xml">
+                <tree string="Warehouse Server Tree" sample="1">
+                    <field name="server_info_id"/>
+                    <field name="server_gen"/>
+                    <field name="date_received"/>
+                    <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Define an action to open the Warehouse Server view -->
+        <record id="action_warehouse_server" model="ir.actions.act_window">
+            <field name="name">Warehouse</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">warehouse.server</field>
+            <field name="view_mode">tree,form,kanban</field>
+        </record>
+
+    </data>
+
+
+
+
+</odoo>
